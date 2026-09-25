@@ -11,6 +11,8 @@ export class SeedController {
                 message: "Database successfully reset and seeded with Atlas Industrial Services demo dataset.",
             });
         } catch (error) {
+
+            
             next(error);
         }
     }

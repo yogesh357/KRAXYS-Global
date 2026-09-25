@@ -3,9 +3,6 @@ import { TechnicianService } from "./technician.service.js";
 import { DEMO_NOW } from "../utils/domain.js";
 
 export class DashboardService {
-    /**
-     * Coordinator Dashboard: Answers "What do I need to process right now?"
-     */
     static async getCoordinatorDashboard() {
         const allRequests = await RequestService.getAllRequests();
         const technicians = await TechnicianService.getAllTechnicians();
@@ -105,7 +102,6 @@ export class DashboardService {
             })),
         ];
 
-        // Deduplicate by requestId while maintaining highest priority ordering
         const seenIds = new Set<string>();
         const uniqueNeedsAttention = needsAttentionItems.filter(item => {
             if (seenIds.has(item.requestId)) return false;
@@ -132,10 +128,6 @@ export class DashboardService {
             recentRequests: allRequests.slice(0, 8),
         };
     }
-
-    /**
-     * Operations Manager Dashboard: Answers "Is the operation under control?"
-     */
     static async getManagerDashboard() {
         const allRequests = await RequestService.getAllRequests();
         const technicians = await TechnicianService.getAllTechnicians();
@@ -151,7 +143,6 @@ export class DashboardService {
         const inProgressCount = activeRequests.filter(r => r.status === 'IN_PROGRESS').length;
         const resolvedCount = allRequests.filter(r => r.status === 'RESOLVED').length;
 
-        // Health Score calculation (0-100)
         let healthStatus = 'CONTROLLED';
         let healthScore = 95;
         if (overdueRequests.length > 0) {
@@ -160,10 +151,10 @@ export class DashboardService {
         if (urgentCount > 1) {
             healthScore -= urgentCount * 10;
         }
-        if (healthScore < 70) healthStatus = 'ATTENTION_REQUIRED';
-        if (healthScore < 50) healthStatus = 'CRITICAL';
+        if (healthScore < 70) healthStatus = 'ATTENTION_REQUIRED'
 
-        // Exceptions Queue for management intervention
+        if (healthScore < 50) healthStatus = 'CRITICAL'
+
         const exceptions = [
             ...overdueRequests.map(r => ({
                 id: r.id,

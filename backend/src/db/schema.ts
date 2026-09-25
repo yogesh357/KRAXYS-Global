@@ -10,7 +10,7 @@ import { nanoid } from "nanoid";
 
 // 1. Customers Table
 export const customers = pgTable('customers', {
-    id: varchar('id', { length: 50 }).primaryKey(), // e.g. "C01", "C02"
+    id: varchar('id', { length: 50 }).primaryKey(),
     name: varchar('name', { length: 255 }).notNull(),
     contactPerson: varchar('contact_person', { length: 255 }),
     phone: varchar('phone', { length: 50 }),
@@ -22,28 +22,28 @@ export const customers = pgTable('customers', {
 
 // 2. Technicians Table
 export const technicians = pgTable('technicians', {
-    id: varchar('id', { length: 50 }).primaryKey(), // e.g. "T1", "T2", "T3"
+    id: varchar('id', { length: 50 }).primaryKey(),
     name: varchar('name', { length: 255 }).notNull(),
     skills: text('skills'),
     phone: varchar('phone', { length: 50 }),
     email: varchar('email', { length: 255 }),
-    status: varchar('status', { length: 50 }).default('AVAILABLE').notNull(), // 'AVAILABLE' | 'ON_JOB' | 'OFF_DUTY'
+    status: varchar('status', { length: 50 }).default('AVAILABLE').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 // 3. Service Requests Table
 export const serviceRequests = pgTable('service_requests', {
-    id: varchar('id', { length: 50 }).primaryKey(), // e.g. "R101", "R102"
+    id: varchar('id', { length: 50 }).primaryKey(),
     customerId: varchar('customer_id', { length: 50 })
         .references(() => customers.id, { onDelete: 'restrict' })
         .notNull(),
-    channel: varchar('channel', { length: 50 }).notNull(), // 'EMAIL' | 'WHATSAPP' | 'PHONE'
+    channel: varchar('channel', { length: 50 }).notNull(),
     message: text('message').notNull(),
     equipmentId: varchar('equipment_id', { length: 100 }),
-    priority: varchar('priority', { length: 50 }).default('NORMAL').notNull(), // 'URGENT' | 'HIGH' | 'NORMAL'
-    priorityReason: text('priority_reason'), // e.g. "Potential stored-goods impact"
-    status: varchar('status', { length: 50 }).default('NEW').notNull(), // 'NEW' | 'NEEDS_CLARIFICATION' | 'ASSIGNED' | 'IN_PROGRESS' | 'WAITING_PART' | 'RESOLVED' | 'DUPLICATE'
+    priority: varchar('priority', { length: 50 }).default('NORMAL').notNull(),
+    priorityReason: text('priority_reason'),
+    status: varchar('status', { length: 50 }).default('NEW').notNull(),
     technicianId: varchar('technician_id', { length: 50 })
         .references(() => technicians.id, { onDelete: 'set null' }),
     scheduledAt: timestamp('scheduled_at', { withTimezone: true }),
@@ -68,7 +68,7 @@ export const requestActivities = pgTable('request_activities', {
     requestId: varchar('request_id', { length: 50 })
         .references(() => serviceRequests.id, { onDelete: 'cascade' })
         .notNull(),
-    actorRole: varchar('actor_role', { length: 50 }).notNull(), // 'COORDINATOR' | 'TECHNICIAN' | 'OPERATIONS_MANAGER' | 'SYSTEM'
+    actorRole: varchar('actor_role', { length: 50 }).notNull(),
     actorName: varchar('actor_name', { length: 100 }).notNull(),
     action: varchar('action', { length: 100 }).notNull(),
     details: text('details'),

@@ -16,9 +16,6 @@ import {
 import { nanoid } from "nanoid";
 
 export class RequestService {
-    /**
-     * Fetch all requests enriched with customer details, technician info, and overdue flags
-     */
     static async getAllRequests(filter?: {
         status?: string;
         priority?: string;
@@ -29,6 +26,7 @@ export class RequestService {
         technicianId?: string;
         search?: string;
     }) {
+
         const rows = await db
             .select({
                 request: serviceRequests,
@@ -48,6 +46,7 @@ export class RequestService {
                 technicianId: request.technicianId,
                 scheduledAt: request.scheduledAt,
             });
+
 
             const customerUpdateMessage = generateCustomerUpdate({
                 id: request.id,
@@ -74,6 +73,7 @@ export class RequestService {
         if (filter?.priority && filter.priority !== 'ALL') {
             enriched = enriched.filter(r => r.priority === filter.priority);
         }
+
         if (filter?.overdueOnly) {
             enriched = enriched.filter(r => r.isOverdue);
         }
@@ -89,9 +89,10 @@ export class RequestService {
         if (filter?.technicianId) {
             enriched = enriched.filter(r => r.technicianId === filter.technicianId);
         }
+
         if (filter?.search) {
             const q = filter.search.toLowerCase();
-            enriched = enriched.filter(r => 
+            enriched = enriched.filter(r =>
                 r.id.toLowerCase().includes(q) ||
                 (r.customer?.name && r.customer.name.toLowerCase().includes(q)) ||
                 r.customerId.toLowerCase().includes(q) ||
@@ -102,10 +103,6 @@ export class RequestService {
 
         return enriched;
     }
-
-    /**
-     * Fetch single request by ID with timeline activities
-     */
     static async getRequestById(id: string) {
         const rows = await db
             .select({
@@ -139,6 +136,7 @@ export class RequestService {
             scheduledAt: request.scheduledAt,
         });
 
+
         const customerUpdateMessage = generateCustomerUpdate({
             id: request.id,
             status: request.status,
@@ -147,7 +145,6 @@ export class RequestService {
             equipmentId: request.equipmentId,
         });
 
-        // If marked as duplicate, optionally fetch original request
         let originalRequest: any = null;
         if (request.duplicateOfId) {
             const origRows = await db
@@ -158,7 +155,7 @@ export class RequestService {
             if (origRows.length) originalRequest = origRows[0];
         }
 
-        // If possible duplicate detected, fetch candidate summary
+
         let possibleDuplicateRequest: any = null;
         if (request.possibleDuplicateId) {
             const candRows = await db
@@ -182,9 +179,7 @@ export class RequestService {
         };
     }
 
-    /**
-     * Create a new manually captured service request
-     */
+
     static async createRequest(data: {
         id?: string;
         customerId: string;
@@ -240,6 +235,7 @@ export class RequestService {
             }
         }
 
+
         const receivedAtDate = data.receivedAt ? new Date(data.receivedAt) : DEMO_NOW;
         const scheduledAtDate = data.scheduledAt ? new Date(data.scheduledAt) : null;
 
@@ -261,6 +257,7 @@ export class RequestService {
             updatedAt: DEMO_NOW,
         });
 
+
         // Add initial creation activity
         await this.addActivity({
             requestId,
@@ -273,6 +270,7 @@ export class RequestService {
 
         if (data.technicianId) {
             await this.addActivity({
+
                 requestId,
                 actorRole: data.actorRole || 'COORDINATOR',
                 actorName: data.actorName || 'Coordinator',
@@ -285,9 +283,6 @@ export class RequestService {
         return this.getRequestById(requestId);
     }
 
-    /**
-     * Assign a technician to a request
-     */
     static async assignTechnician(
         requestId: string,
         technicianId: string,
@@ -311,7 +306,6 @@ export class RequestService {
             })
             .where(eq(serviceRequests.id, requestId));
 
-        // Update technician active status if appropriate
         await db
             .update(technicians)
             .set({ status: 'ON_JOB', updatedAt: DEMO_NOW })
@@ -329,9 +323,6 @@ export class RequestService {
         return this.getRequestById(requestId);
     }
 
-    /**
-     * Schedule or reschedule a visit
-     */
     static async scheduleVisit(
         requestId: string,
         scheduledAt: string,
@@ -363,9 +354,6 @@ export class RequestService {
         return this.getRequestById(requestId);
     }
 
-    /**
-     * Update request status
-     */
     static async updateStatus(
         requestId: string,
         newStatus: string,
@@ -407,9 +395,6 @@ export class RequestService {
         return this.getRequestById(requestId);
     }
 
-    /**
-     * Mark request as duplicate
-     */
     static async markDuplicate(
         requestId: string,
         duplicateOfId: string,
@@ -440,9 +425,6 @@ export class RequestService {
         return this.getRequestById(requestId);
     }
 
-    /**
-     * Request clarification from customer
-     */
     static async requestClarification(
         requestId: string,
         clarificationNotes: string,
@@ -473,9 +455,6 @@ export class RequestService {
         return this.getRequestById(requestId);
     }
 
-    /**
-     * Update request attributes (priority, equipment ID, notes)
-     */
     static async updateRequest(
         requestId: string,
         data: {
@@ -518,9 +497,6 @@ export class RequestService {
         return this.getRequestById(requestId);
     }
 
-    /**
-     * Add activity log entry
-     */
     static async addActivity(data: {
         requestId: string;
         actorRole: string;

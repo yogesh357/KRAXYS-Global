@@ -193,7 +193,7 @@ export async function seedDatabase() {
             priorityReason: "Operational pump disruption follow-up",
             status: "ASSIGNED",
             technicianId: "T1",
-            scheduledAt: null, // No visit time recorded yet
+            scheduledAt: null,
             receivedAt: new Date("2026-10-01T08:20:00.000Z"),
             clarificationNotes: null,
             resolutionNotes: null,

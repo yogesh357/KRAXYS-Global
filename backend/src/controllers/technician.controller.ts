@@ -9,6 +9,7 @@ export class TechnicianController {
             res.status(HTTPSTATUS.OK).json({
                 success: true,
                 data,
+
             });
         } catch (error) {
             next(error);
@@ -16,6 +17,7 @@ export class TechnicianController {
     }
 
     static async getById(req: Request, res: Response, next: NextFunction) {
+
         try {
             const id = req.params.id as string;
             const data = await TechnicianService.getTechnicianById(id);
@@ -31,6 +33,7 @@ export class TechnicianController {
             });
         } catch (error) {
             next(error);
+
         }
     }
 
@@ -38,10 +41,11 @@ export class TechnicianController {
         try {
             const id = req.params.id as string;
             const data = await TechnicianService.getTechnicianJobs(id);
-            res.status(HTTPSTATUS.OK).json({
-                success: true,
-                data,
-            });
+            res.status(HTTPSTATUS.OK).json(
+                {
+                    success: true,
+                    data,
+                });
         } catch (error) {
             next(error);
         }

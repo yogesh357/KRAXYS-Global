@@ -4,9 +4,6 @@ import { eq, desc, inArray } from "drizzle-orm";
 import { isRequestOverdue, generateCustomerUpdate } from "../utils/domain.js";
 
 export class TechnicianService {
-    /**
-     * Get all technicians with current workload metrics
-     */
     static async getAllTechnicians() {
         const techList = await db.select().from(technicians);
         const allRequests = await db
@@ -21,7 +18,7 @@ export class TechnicianService {
             const assignedJobs = allRequests.filter(
                 r => r.request.technicianId === tech.id
             );
-            
+
             const activeJobs = assignedJobs.filter(
                 r => r.request.status === 'ASSIGNED' || r.request.status === 'IN_PROGRESS' || r.request.status === 'WAITING_PART'
             );
@@ -42,18 +39,14 @@ export class TechnicianService {
         });
     }
 
-    /**
-     * Get single technician with jobs
-     */
+
     static async getTechnicianById(id: string) {
         const rows = await db.select().from(technicians).where(eq(technicians.id, id)).limit(1);
         if (!rows.length) return null;
         return rows[0];
     }
 
-    /**
-     * Get specific technician's jobs list
-     */
+
     static async getTechnicianJobs(technicianId: string) {
         const rows = await db
             .select({
