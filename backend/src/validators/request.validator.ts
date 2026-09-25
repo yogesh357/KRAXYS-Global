@@ -3,7 +3,7 @@ import { z } from "zod";
 export const createRequestSchema = z.object({
     customerId: z.string().min(1, "Customer ID is required"),
     channel: z.enum(["EMAIL", "WHATSAPP", "PHONE"], {
-        errorMap: () => ({ message: "Channel must be EMAIL, WHATSAPP, or PHONE" }),
+        message: "Channel must be EMAIL, WHATSAPP, or PHONE",
     }),
     message: z.string().min(3, "Message must be at least 3 characters"),
     equipmentId: z.string().optional().nullable(),
