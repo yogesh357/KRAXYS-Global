@@ -5,7 +5,6 @@ import technicianRoutes from "./technician.routes.js";
 import dashboardRoutes from "./dashboard.routes.js";
 import customerRoutes from "./customer.routes.js";
 import seedRoutes from "./seed.routes.js";
-import authRoutes from "./auth.routes.js";
 
 const router = Router();
 
@@ -22,6 +21,5 @@ router.use("/technicians", technicianRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/customers", customerRoutes);
 router.use("/seed", seedRoutes);
-router.use("/auth", authRoutes);
 
 export default router;

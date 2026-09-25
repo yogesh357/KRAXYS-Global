@@ -5,7 +5,6 @@ import {
     technicians,
     serviceRequests,
     requestActivities,
-    users,
 } from "../db/schema.js";
 import { sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
@@ -67,15 +66,6 @@ export async function seedDatabase() {
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
 
-        CREATE TABLE IF NOT EXISTS users (
-            id VARCHAR(50) PRIMARY KEY,
-            name VARCHAR(100) NOT NULL,
-            email VARCHAR(255) UNIQUE NOT NULL,
-            role VARCHAR(50) NOT NULL,
-            technician_id VARCHAR(50) REFERENCES technicians(id) ON DELETE SET NULL,
-            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-        );
     `);
 
     // Clean existing seed data
@@ -84,7 +74,6 @@ export async function seedDatabase() {
         TRUNCATE TABLE service_requests CASCADE;
         TRUNCATE TABLE technicians CASCADE;
         TRUNCATE TABLE customers CASCADE;
-        TRUNCATE TABLE users CASCADE;
     `);
 
     console.log("Seeding Customers C01 - C07...");
@@ -172,43 +161,6 @@ export async function seedDatabase() {
             phone: "+1-555-0203",
             email: "david.chen@atlasindustrial.internal",
             status: "ON_JOB",
-        },
-    ]);
-
-    console.log("Seeding Users...");
-    await db.insert(users).values([
-        {
-            id: "U1",
-            name: "Alex Morgan",
-            email: "alex.coordinator@atlasindustrial.internal",
-            role: "COORDINATOR",
-        },
-        {
-            id: "U2",
-            name: "Samantha Wright",
-            email: "samantha.ops@atlasindustrial.internal",
-            role: "OPERATIONS_MANAGER",
-        },
-        {
-            id: "U3",
-            name: "Marcus Vance",
-            email: "marcus.t1@atlasindustrial.internal",
-            role: "TECHNICIAN",
-            technicianId: "T1",
-        },
-        {
-            id: "U4",
-            name: "Elena Rostova",
-            email: "elena.t2@atlasindustrial.internal",
-            role: "TECHNICIAN",
-            technicianId: "T2",
-        },
-        {
-            id: "U5",
-            name: "David Chen",
-            email: "david.t3@atlasindustrial.internal",
-            role: "TECHNICIAN",
-            technicianId: "T3",
         },
     ]);
 
@@ -468,7 +420,7 @@ export async function seedDatabase() {
 }
 
 // Allow direct CLI execution: `npx tsx src/seeders/seed.ts`
-if (process.argv[1]?.includes('seed.ts') || process.argv[1]?.includes('adminSeeder.ts')) {
+if (process.argv[1]?.includes('seed.ts')) {
     seedDatabase()
         .then(() => {
             console.log("Seed script finished successfully.");

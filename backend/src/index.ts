@@ -1,14 +1,10 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import routes from './routes/index.js';
 import helmet from 'helmet';
 import "dotenv/config";
 import { ZodError } from 'zod';
 import { HTTPSTATUS } from './config/http.config.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
@@ -35,11 +31,7 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
     next();
 });
 
-// Support both /api and /api/v1 prefixes
-app.use("/api/v1", routes);
 app.use("/api", routes);
-
-app.use("/uploads", express.static(path.join(__dirname, '..', 'uploads')));
 
 // Root endpoint
 app.get("/", (_req, res) => {

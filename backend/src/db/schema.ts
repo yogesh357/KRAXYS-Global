@@ -78,18 +78,6 @@ export const requestActivities = pgTable('request_activities', {
     index('idx_request_activities_created_at').on(t.createdAt),
 ]);
 
-// 5. Users (Optional reference for RBAC / Demo Roles)
-export const users = pgTable('users', {
-    id: varchar('id', { length: 50 }).primaryKey().$default(() => nanoid()),
-    name: varchar('name', { length: 100 }).notNull(),
-    email: varchar('email', { length: 255 }).unique().notNull(),
-    role: varchar('role', { length: 50 }).notNull(), // 'COORDINATOR' | 'OPERATIONS_MANAGER' | 'TECHNICIAN'
-    technicianId: varchar('technician_id', { length: 50 })
-        .references(() => technicians.id, { onDelete: 'set null' }),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-});
-
 // Relations
 export const customersRelations = relations(customers, ({ many }) => ({
     serviceRequests: many(serviceRequests),
